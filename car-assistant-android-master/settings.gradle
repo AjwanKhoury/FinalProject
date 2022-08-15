@@ -1,0 +1,5 @@
+include ':app' ,':tensorflow-lite'
+include ':openCVLibrary3415'
+include ':openCVLibrary3415'
+include ':openCVLibrary3415'
+include ':openCVLibrary3415'
