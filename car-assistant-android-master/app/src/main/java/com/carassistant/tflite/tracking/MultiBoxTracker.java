@@ -190,16 +190,17 @@ public class MultiBoxTracker {
         }
         for (int i = 0; i < screenPoints.size(); i++) {
                 // map the points from the frame to the canvas
-               float [] points = (float[]) screenPoints.get(i);
+            float[] points = (float[]) screenPoints.get(i);
                 getFrameToCanvasMatrix().mapPoints(points);
                 // declare the paint object and set the color to red
-                Paint paint = new Paint();
-                paint.setColor(Color.RED);
+                boxPaint.setColor(Color.GREEN);
                 // draw the lines on the canvas
-                paint.setStrokeWidth(10);
-                canvas.drawLine(points[0], points[1], points[2], points[3], paint);
+                RectF rect = new RectF(points[0], points[1], points[2], points[3]);
+                float cornerSize = Math.min(rect.width(), rect.height()) / 8.0f;
+                canvas.drawRoundRect(rect, cornerSize, cornerSize, boxPaint);
+                // write text lane detection on the canvas on top left corner of the rectangle
+                borderedText.drawText(canvas, rect.left + cornerSize, rect.top, "lane detection", boxPaint);
             }
-        // clear the screenPoints list
         screenPoints.clear();
         }
 

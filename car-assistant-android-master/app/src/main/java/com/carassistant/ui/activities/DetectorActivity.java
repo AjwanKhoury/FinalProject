@@ -14,16 +14,13 @@ import android.graphics.Typeface;
 import android.location.Location;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
-import android.util.Pair;
 import android.util.Size;
 import android.util.TypedValue;
-import android.view.SurfaceView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +34,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.carassistant.R;
 import com.carassistant.di.components.DaggerScreenComponent;
-import com.carassistant.managers.BTEsp32;
 import com.carassistant.managers.SharedPreferencesManager;
 import com.carassistant.model.bus.MessageEventBus;
 import com.carassistant.model.bus.model.EventGpsDisabled;
@@ -62,7 +58,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -77,18 +72,16 @@ import io.reactivex.disposables.CompositeDisposable;
 
 import static com.carassistant.tflite.classification.SpeedLimitClassifier.MODEL_FILENAME;
 
-import static org.opencv.core.CvType.CV_32F;
-
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
@@ -120,8 +113,19 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private Bitmap rgbFrameBitmap = null;
     private Bitmap croppedBitmap = null;
     private Bitmap cropCopyBitmap = null;
-
+    private Mat mRgba, mGray, circles;
+    private Mat mRed, mGreen, mBlue, mHue_hsv, mSat_hsv, mVal_hsv, mHue_hls, mSat_hls, mLight_hls;
+    private Mat hsv, hls, rgba, gray;
+    private Mat mNew, mask, mEdges, laneZoneMat;
+    private org.opencv.core.Size ksize = new org.opencv.core.Size(5, 5);
+    private double sigma = 3;
+    private Point blurPt = new Point(3, 3);
+    private Rect signRegion;
+    MatOfPoint laneZone;
+    private int rows, cols, left, width;
+    private double top, middleX, bottomY;
     private boolean computingDetection = false;
+    private double vehicleCenterX1, vehicleCenterY1, vehicleCenterX2, vehicleCenterY2, laneCenterX, laneCenterY;
 
     private long timestamp = 0;
 
@@ -141,7 +145,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private double distanceValue = 0;
     private CompositeDisposable compositeDisposable;
     private MediaPlayerHolder mediaPlayerHolder;
-
+    private RectF rectF = new RectF();
     SpeedLimitClassifier speedLimitClassifier;
     LaneTracking laneTracking;
 
@@ -165,15 +169,40 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 .subscribe(v -> {
                     notificationSpeed = true;
                 });
-
+        OpenCVLoader.initDebug();
         inject();
         setupLocation();
         setupRecycler();
         setupViews();
         setCallBack();
         setupClassifier();
+        initializeAllMats();
 
     }
+
+    private void initializeAllMats() {
+        mRgba = new Mat();
+        mGray = new Mat();
+        mRed = new Mat();
+        mGreen = new Mat();
+        mBlue = new Mat();
+        mHue_hsv = new Mat();
+        mSat_hsv = new Mat();
+        mVal_hsv = new Mat();
+        mHue_hls = new Mat();
+        mSat_hls = new Mat();
+        mLight_hls = new Mat();
+        hsv = new Mat();
+        hls = new Mat();
+        rgba = new Mat();
+        gray = new Mat();
+        mNew = new Mat();
+        mask = new Mat();
+        mEdges = new Mat();
+        laneZoneMat = new Mat();
+        laneZone = new MatOfPoint();
+    }
+
     private BaseLoaderCallback baseCallback = new BaseLoaderCallback(this) {
         public void onManagerConnected(int status) {
             super.onManagerConnected(status);
@@ -279,6 +308,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         outState.putString(SIGN_LIST, new Gson().toJson(adapter.getSigns()));
         outState.putDouble(DISTANCE, distanceValue);
     }
+    // initialize all mats
+
 
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -439,7 +470,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         readyForNextImage();
         Mat rgbFrame = new Mat();
         Utils.bitmapToMat(rgbFrameBitmap, rgbFrame);
-        this.draw_LaneLines(rgbFrame);
         Utils.matToBitmap(rgbFrame, rgbFrameBitmap);
         final Canvas canvas = new Canvas(croppedBitmap);
         canvas.drawBitmap(rgbFrameBitmap, frameToCropTransform, null);
@@ -459,7 +489,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                         cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
                         Mat mat = new Mat();
                         Utils.bitmapToMat(cropCopyBitmap, mat);
-                        processResults(mat);
+                        draw_LaneLines(mat);
                         final Canvas canvas = new Canvas(cropCopyBitmap);
                         final Paint paint = new Paint();
                         // paint is used to draw the bounding box around the detected object.
@@ -481,22 +511,23 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                                 runOnUiThread(() -> updateSignList(result, croppedBitmap));
                                 // draw the lines of hough transform on the canvas
 //                                Mat finalMat = mat;
-//                                runOnUiThread(() -> draw_LaneLines(finalMat));
 
                             }
                         }
+
                         ArrayList<float[]> mappedRecognitionsPoints = new ArrayList<>();
                         // for loop to draw the lane lines on the canvas
                         for (int i = 0; i < points.size(); i++) {
                             float[] point = points.get(i);
                             cropToFrameTransform.mapPoints(point);
                             mappedRecognitionsPoints.add(point);
-
+                         //   runOnUiThread(draw_LaneLines(mat));
                         }
                         tracker.trackResults(mappedRecognitions, currTimestamp);
-                        tracker.trackLaneDetection(mappedRecognitionsPoints, currTimestamp);
+                        tracker.trackLaneDetection(points, currTimestamp);
                         trackingOverlay.postInvalidate();
-
+                        mappedRecognitionsPoints.clear();
+                        points.clear();
                         computingDetection = false;
 
                         runOnUiThread(() -> {
@@ -608,157 +639,226 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                         .replace(',', '.')
                         .replace(".0", ""));
     }
-    private Mat processResults(Mat frame) {
-        steering_angle_ = get_steering_prediction(frame.clone());
-        Mat displayMat = null;
-        displayMat  = draw_LaneLines(frame.clone());
-        counterFrme ++;
-        if(steering_angle_< 0 ) {
-            Imgproc.putText(
-                    displayMat,                          // Matrix obj of the image
-                    "turn left " + steering_angle_ * -1 + "% of the wheel",          // Text to be added
-                    new Point(10, 50),               // point
-                    Core.FONT_HERSHEY_SIMPLEX,      // front face
-                    1,                               // front scale
-                    new Scalar(255, 0, 0),             // Scalar object for color
-                    6                                // Thickness
-            );
-        }
-        if(steering_angle_ > 0 ) {
-            Imgproc.putText(
-                    displayMat,                          // Matrix obj of the image
-                    "turn right " + steering_angle_  + "% of the wheel",          // Text to be added
-                    new Point(10, 50),               // point
-                    Core.FONT_HERSHEY_SIMPLEX,      // front face
-                    1,                               // front scale
-                    new Scalar(255, 0, 0),             // Scalar object for color
-                    6                                // Thickness
-            );
-        }
-        return displayMat;
+
+
+    private void init_picture_attributes(int w , int h){
+        rows = h;
+        cols = w;
+        left = rows / 8;
+        width = cols - left;
+        top = rows / 2.5;
+        middleX = w /2;
+        bottomY = h * .95;
+
+        vehicleCenterX1 = middleX;
+        vehicleCenterX2 = middleX;
+        vehicleCenterY1 = bottomY-(rows/7);
+        vehicleCenterY2 = bottomY-(rows/20);
+        laneCenterX = 0;
+        laneCenterY = (bottomY-(rows/7) + bottomY-(rows/20)) / 2;
     }
-    private float get_steering_prediction(Mat frame) {
-        Imgproc.cvtColor(frame, frame, Imgproc.COLOR_RGBA2RGB);
-        Imgproc.cvtColor(frame, frame, Imgproc.COLOR_RGB2YUV);
-        Imgproc.GaussianBlur(frame, frame, new org.opencv.core.Size(3, 3), 0, 0);
+    private void draw_LaneLines(Mat frame){
+        init_picture_attributes(frame.cols(), frame.rows());
+        mRgba = frame.clone();
+        mGray = frame.clone();
+        Imgproc.cvtColor(mGray, mGray, Imgproc.COLOR_RGB2GRAY);
+        Imgproc.blur(mGray, mGray, ksize, blurPt);
+        Imgproc.GaussianBlur(mRgba, mRgba, ksize, sigma);
 
-        Mat f = new Mat();
-        Imgproc.resize(frame, f, new org.opencv.core.Size(200, 66));
-        //   f = Dnn.blobFromImage(f, 0.00392, new Size(200, 66) , new Scalar(0,0 ,0), false,false);
-        f.convertTo(f, CV_32F);
-        StringBuilder sb = new StringBuilder();
-        String s = new String();
-        System.out.println("hei " + f.height() + ", wit" + f.width() + "ch " + f.channels());
-        System.out.println("col " + f.cols() + ", row" + f.rows() + "ch " + f.channels());
-        float[][][][] inputs = new float[1][200][66][3];
-        float fs[] = new float[3];
-        for (int r = 0; r < f.rows(); r++) {
-            //sb.append(""+r+") ");
-            for (int c = 0; c < f.cols(); c++) {
-                f.get(r, c, fs);
-                //sb.append( "{");
-                inputs[0][c][r][0] = fs[0] / 255;
-                inputs[0][c][r][1] = fs[1] / 255;
-                inputs[0][c][r][2] = fs[2] / 255;
-
-            }
-        }
-        return steering_angle_;
-    }
-
-    private Mat draw_LaneLines(Mat frame){
-        Mat gray = frame.clone();
-        Imgproc.cvtColor(gray, gray, Imgproc.COLOR_RGBA2GRAY);
-        Imgproc.GaussianBlur(gray,gray,new org.opencv.core.Size(5,5),0,0);
-        Imgproc.Canny(gray,gray,60,140);
-
-        int height = gray.rows();
-        int width = gray.cols();
-        System.out.println("hei "+ height + "wid " + width);
-        Mat mask = new Mat(height,width, CvType.CV_8UC1,Scalar.all(0));
-        Point[] rook_points = new Point[3];
-        rook_points[0]  = new Point(200,height);
-        rook_points[1]  = new Point(width/2 +50, height/2);
-        rook_points[2]  = new Point(width-50,height);
-        MatOfPoint matPt = new MatOfPoint();
-        matPt.fromArray(rook_points);
-
-        List<MatOfPoint> ppt = new ArrayList<MatOfPoint>();
-        ppt.add(matPt);
-        Imgproc.fillPoly(mask,
-                ppt,
-                new Scalar( 255,255,255 )
-        );
-        Mat after_bit = new Mat();
-        Core.bitwise_and(gray,mask,after_bit);
-//        lines = cv2.HoughLinesP(cropped_canny, 2, np.pi/180, 100, np.array([]), minLineLength=40,maxLineGap=5)
-        Mat result = after_bit.clone();
+        Mat rgbaInnerWindow = mRgba.submat((int)top, rows, left, width);
         Mat lines = new Mat();
-        Imgproc.HoughLinesP(after_bit, lines, 2, Math.PI/180, 100, 50, 4);
+        /* rgbaInnerWindow & mIntermediateMat = ROI Mats */
+        rgbaInnerWindow.copyTo(rgba);
+        Imgproc.cvtColor(rgbaInnerWindow, gray, Imgproc.COLOR_RGB2GRAY);
+        Imgproc.cvtColor(rgbaInnerWindow, hsv, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(rgbaInnerWindow, hls, Imgproc.COLOR_RGB2HLS);
 
-        Mat frame_clone = frame.clone();
+        splitRGBChannels(rgba, hsv, hls);
+        applyThreshold();
+        org.opencv.core.Size size = new org.opencv.core.Size(5, 5);
+        Imgproc.erode(mask, mask, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, size));
+        Imgproc.dilate(mask, mask, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, size));
+        Imgproc.Canny(mask, mEdges, 50, 150);
+        Imgproc.HoughLinesP(mEdges, lines, 1, Math.PI/180, 50, 25, 85);
+        if (lines.rows() > 0) {
+            getAverageSlopes(lines);
+            points.add(new float[]{(float)left,(float) top, (float) cols-left, (float) bottomY});
 
-        ArrayList<Pair<Double, Double>> left_fit = new ArrayList<>();
-        ArrayList<Pair<Double, Double>> right_fit = new ArrayList<>();
+        }
 
-        float left_slope_avr = 0;
-        float right_slope_avr = 0;
-        float left_iterccept_avr = 0;
-        float right_iterccept_avr = 0;
-        ///going through lines:
-        for(int j = 0; j < lines.rows(); j++) {
-            for (int i = 0; i < lines.cols(); i++) {
-                double[] val = lines.get(j, i);
-                double x1 = val[0];                double y1 = val[1];
-                double x2 = val[2];                double y2 = val[3];
-                double slope = Double.MAX_VALUE;
-                double intercept = 0;
-                boolean flag_slope_inter =false;
+        // adding the points to the list of points for the lane lines to be drawn on the image later
 
-                if(x1-x2!=0 ) {
-                    slope = (y1 - y2) / (x1 - x2);
-                    intercept = (y1 - (slope*x1)) ;
-                    flag_slope_inter = true;
+      // Imgproc.line(mRgba, new Point(vehicleCenterX1, vehicleCenterY1), new Point(vehicleCenterX2, vehicleCenterY2), darkGreen, 2, 8);
+       // points.add(new float[]{(float)vehicleCenterX1,(float) vehicleCenterY1, (float) vehicleCenterX2, (float) vehicleCenterY2});
+      //  Imgproc.rectangle(mRgba, new Point(left, top), new Point(cols-left, bottomY), darkGreen, 2);
+
+//    return mask;
+
+    }
+
+
+
+
+    public void getAverageSlopes(Mat lines) {
+        List<Double> left_slopes = new ArrayList<>();
+        List<Double> right_slopes = new ArrayList<>();
+        List<Double> left_y_intercept = new ArrayList<>();
+        List<Double> right_y_intercept = new ArrayList<>();
+        // init the imgHeight and imgWidth
+        int imgHeight = mRgba.rows();
+        // Threshold zone for detected lanes, lines must be within this zone
+        double zoneX1 = cols-left*2.5;
+        double zoneX2 = left*2.5;
+       // Imgproc.line(mRgba, new Point(zoneX1, top), new Point(zoneX1, top+5), new Scalar(0, 155, 0), 2, 8);
+       // Imgproc.line(mRgba, new Point(zoneX2, top), new Point(zoneX2, top+5), new Scalar(0, 155, 0), 2, 8);
+        // left line float array
+        float[] left_line = {(float) zoneX1, (float) top, (float) zoneX1, (float)(top + 100)};
+        // right line float array
+        float[] right_line = {(float) zoneX2, (float) top, (float) zoneX2, (float)(top + 100)};
+       // points.add(left_line);
+       // points.add(right_line);
+
+        for (int i=0; i<lines.rows(); i++) {
+            double[] points = lines.get(i, 0);
+            double x1, y1, x2, y2;
+
+            try {
+                x1 = points[0];
+                y1 = points[1];
+                x2 = points[2];
+                y2 = points[3];
+
+                Point p1 = new Point(x1, y1);
+                Point p2 = new Point(x2, y2);
+
+                double slope = (p2.y - p1.y) / (p2.x - p1.x);
+                double y_intercept;
+
+                if (slope > 0.375 && slope < 2.6) { // Right lane
+                    if (p1.x+left < zoneX1) {
+                        right_slopes.add(slope);
+                        y_intercept = p1.y - (p1.x * slope);
+                        right_y_intercept.add(y_intercept);
+                    }
                 }
-
-                if ( slope < 0  && flag_slope_inter) {
-                    left_fit.add(new Pair(slope, intercept));
-                    left_slope_avr += slope;
-                    left_iterccept_avr += intercept;
+                else if (slope > -2.6 && slope < -0.375) { // Left lane
+                    if (p2.x+left > zoneX2) {
+                        left_slopes.add(slope);
+                        y_intercept = p1.y - (p1.x * slope);
+                        left_y_intercept.add(y_intercept);
+                    }
                 }
-                else if ( slope > 0 && flag_slope_inter) {
-                    right_fit.add(new Pair(slope, intercept));
-                    right_slope_avr += slope;
-                    right_iterccept_avr += intercept;
-                }
+            } catch (Error e) {
+                Log.e(TAG, "onCameraFrame: ", e);
             }
         }
-        left_slope_avr = left_slope_avr/left_fit.size();
-        left_iterccept_avr = left_iterccept_avr/left_fit.size();
-        right_slope_avr = right_slope_avr/right_fit.size();
-        right_iterccept_avr = right_iterccept_avr/right_fit.size();
 
-        float [] points_Left_line = make_points(left_slope_avr, left_iterccept_avr, height);
-        float [] points_Right_line = make_points(right_slope_avr, right_iterccept_avr, height);
-        points = new ArrayList<>();
-        points.add(points_Left_line);
-        points.add(points_Right_line);
-        return result;
-//    return mask;
-    }
-    private float[] make_points(double slope, double intercept, int height) {
-        float [] ret = new float[4];
-        float y1 = height;
-        float y2 = y1*3/5;
-        float x1 = (float) ((y1-intercept)/slope);
-        float x2 = (float) ((y2-intercept)/slope);
-        ret[0] = x1 ;
-        ret[1] = y1 ;
-        ret[2] = x2 ;
-        ret[3] = y2 ;
-        return ret;
-    }
+        double avg_left_slope = 0;
+        double avg_right_slope = 0;
+        double avg_left_y_intercept = 0;
+        double avg_right_y_intercept = 0;
 
+        for (int i=0; i< right_slopes.size(); i++) {
+            avg_right_slope += right_slopes.get(i);
+            avg_right_y_intercept += right_y_intercept.get(i);
+        }
+        avg_left_slope /= left_slopes.size();
+        avg_left_y_intercept /= left_y_intercept.size();
+
+        // x = (y-b)/m
+        // y = xm + b
+        double newLeftTopX = ((-avg_left_y_intercept)/avg_left_slope) + left;
+        double newRightTopX = ((0 - avg_right_y_intercept)/avg_right_slope) + left;
+
+        Point rightLanePt = new Point((imgHeight - avg_right_y_intercept)/avg_right_slope, imgHeight);
+        Point leftLanePt = new Point((0), (-left*avg_left_slope)+avg_left_y_intercept);
+
+        Point topLeftPt = new Point(newLeftTopX, 0 + top);
+        Point topRightPt = new Point(newRightTopX, 0 + top);
+        Point bottomLeftPt = new Point(-500+left, ((-500*avg_left_slope)+avg_left_y_intercept)+top);
+        Point bottomRightPt = new Point(rightLanePt.x + left, rightLanePt.y + top);
+
+        if (right_slopes.size() != 0 && left_slopes.size() != 0) {
+            double laneCenterX1 = (laneCenterY-top-avg_left_y_intercept)/avg_left_slope + left;
+            double laneCenterX2 = (laneCenterY-top-avg_right_y_intercept)/avg_right_slope + left;
+            laneCenterX = (laneCenterX1+laneCenterX2) / 2;
+
+            laneZone = new MatOfPoint(topLeftPt, topRightPt, bottomRightPt, bottomLeftPt);
+            laneZoneMat.setTo(new Scalar(0, 0, 0));
+            Imgproc.fillConvexPoly(laneZoneMat, laneZone, new Scalar(255, 240, 160));
+            Core.addWeighted(laneZoneMat, .5, mRgba, 1, 0, mRgba);
+            laneZone.release();
+
+        }
+      //  points.add(new float[]{(float)laneCenterX,(float) laneCenterY, (float) laneCenterX, (float) laneCenterY});
+      //  Imgproc.line(mRgba, new Point(vehicleCenterX1, laneCenterY), new Point(laneCenterX, laneCenterY), darkGreen, 2, 8);
+      //  Imgproc.circle(mRgba, new Point(laneCenterX, laneCenterY), 4, new Scalar(0, 0, 255), 7);
+        // add point to list for drawing lines
+      //  points.add(new float[]{(float)laneCenterX,(float) laneCenterY});
+        if (left_slopes.size() != 0) {
+            Imgproc.line(mRgba, topLeftPt, bottomLeftPt, new Scalar(225, 0, 0), 8);
+            // convert topLeftPt and bottomLeftPt to float array for drawing the lane lines
+            float[] leftLine = {(float)topLeftPt.x, (float)topLeftPt.y , (float) bottomLeftPt.x, (float) bottomLeftPt.y};
+          //  points.add(leftLine);
+        }
+        if (right_slopes.size() != 0) {
+            Imgproc.line(mRgba, bottomRightPt, topRightPt, new Scalar(0, 0, 225), 8);
+            // adding the points lines
+            float[] rightLine = {(float)bottomRightPt.x, (float)bottomRightPt.y , (float) topRightPt.x, (float) topRightPt.y};
+         //   points.add(rightLine);
+        }
+    }
+    public void splitRGBChannels(Mat rgb_split, Mat hsv_split, Mat hls_split) {
+        List<Mat> rgbChannels = new ArrayList<>();
+        List<Mat> hsvChannels = new ArrayList<>();
+        List<Mat> hlsChannels = new ArrayList<>();
+
+        Core.split(rgb_split, rgbChannels);
+        Core.split(hsv_split, hsvChannels);
+        Core.split(hls_split, hlsChannels);
+
+        rgbChannels.get(0).copyTo(mRed);
+        rgbChannels.get(1).copyTo(mGreen);
+        rgbChannels.get(2).copyTo(mBlue);
+
+        hsvChannels.get(0).copyTo(mHue_hsv);
+        hsvChannels.get(1).copyTo(mSat_hsv);
+        hsvChannels.get(2).copyTo(mVal_hsv);
+
+        hlsChannels.get(0).copyTo(mHue_hls);
+        hlsChannels.get(1).copyTo(mSat_hls);
+        hlsChannels.get(2).copyTo(mLight_hls);
+//
+//
+        for (int i = 0; i < rgbChannels.size(); i++){
+            rgbChannels.get(i).release();
+        }
+
+        for (int i = 0; i < hsvChannels.size(); i++){
+            hsvChannels.get(i).release();
+        }
+
+        for (int i = 0; i < hlsChannels.size(); i++){
+            hlsChannels.get(i).release();
+        }
+    }
+    public void applyThreshold() {
+        Scalar lowerThreshold = new Scalar(210), higherThreshold = new Scalar(255);
+
+        Core.inRange(mRed, lowerThreshold, higherThreshold, mRed);
+//        Core.inRange(mGreen, new Scalar(225), new Scalar(255), mGreen);
+//        Core.inRange(mBlue, new Scalar(200), new Scalar(255), mBlue);
+
+//        Core.inRange(mHue_hsv, new Scalar(200), new Scalar(255), mHue_hsv);
+//        Core.inRange(mSat_hsv, new Scalar(200), new Scalar(255), mSat_hsv);
+        Core.inRange(mVal_hsv, lowerThreshold, higherThreshold, mVal_hsv);
+
+//        Core.inRange(mHue_hls, new Scalar(200), new Scalar(255), mHue_hls);
+//        Core.inRange(mLight_hls, new Scalar(200), new Scalar(255), mLight_hls);
+//        Core.inRange(mSat_hls, new Scalar(200), new Scalar(255), mSat_hls);
+
+        Core.bitwise_and(mRed, mVal_hsv, mask);
+    }
     private void setupRecycler() {
         adapter = new SignAdapter(this);
 
@@ -819,7 +919,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         SignEntity sign = null;
         if ("crosswalk".equals(result.getTitle())) {
             // send zero speed to Esp32Driver to stop the car
-            Esp32Driver.sendCommand("00000000");
+         //   Esp32Driver.sendCommand("00000000");
             sign = new SignEntity(result.getTitle(), R.drawable.crosswalk, R.raw.crosswalk);
         } else if ("stop".equals(result.getTitle())) {
             sign = new SignEntity(result.getTitle(), R.drawable.stop, R.raw.stop);
