@@ -7,8 +7,8 @@ Autonomous vehicles are automobiles that can move without any intervention by de
 We are aiming to add emergency vehicle priority awareness feature to autonomous cars. In our project, we plan to use Artificial Intelligence, Machine Learning, Image Processing methods and test the results in simulation environment. The Autonomous Vehicle Drive Simulator that we will use need to provide us to simulate sensors.
 
 ## Tools to be used in this project
-*OpenCv Library
-*Nvidia Jet Racer Interface
-*YoloV5 / RCNN / Mobile Net v2.
-*Deep Sort / Kalman filter for tracking purpose.
+1) OpenCv Library
+2) Nvidia Jet Racer Interface
+3) YoloV5 / RCNN / Mobile Net v2.
+4) Deep Sort / Kalman filter for tracking purpose.
 
