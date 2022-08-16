@@ -8,7 +8,9 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 
 ## Tools to be used in this project
 1) OpenCv Library
-2) Nvidia Jet Racer Interface
-3) YoloV5 / RCNN / Mobile Net v2.
-4) Deep Sort / Kalman filter for tracking purpose.
+2) YoloV5 / RCNN / Mobile Net v2.
+3) Deep Sort / Kalman filter for tracking purpose.
+4) ESP32
+5) Arduino IDE
+6) Android Studio
 
