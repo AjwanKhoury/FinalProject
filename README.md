@@ -14,3 +14,15 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 5) Arduino IDE
 6) Android Studio
 
+### OpenCV + Android Studio
+1) Collecting the frames of the Realtime video.
+2) Navigating the vehicle.
+3) Compassing information.
+4) Running the AI models for e.g. YoloV5 & Deep Sort.
+5) Running the Computer vision's algorithms (OpenCV library).
+6) Andruav for Navigating.
+7) Two android phones connected to transfer data.
+## Cameras:
+1) Camera for lane detection.
+2) Camera for object detection.
+
