@@ -19,7 +19,7 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 9) Deep Sort / Kalman filter for tracking purpose.
 
 # ESP32
-![ESP32 LORA](https://user-images.githubusercontent.com/58775369/185207582-fb68e6f0-d809-45ac-9717-c3e5396ce03f.jpeg)
+![ESP32 LORA](https://user-images.githubusercontent.com/58775369/185207582-fb68e6f0-d809-45ac-9717-c3e5396ce03f.jpeg | width=100)
 > ESP32 is a low-cost, low-power Microcontroller with an integrated Wi-Fi and Bluetooth. It is the successor to the ESP8266 which is also a low-cost Wi->Fi microchip albeit with limited vastly limited functionality.
 
 ### OpenCV + Android Studio
