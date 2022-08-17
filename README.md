@@ -11,7 +11,7 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 1) ESP32
 > In this section we will cover all informations that we should know about ESP32.
 3) Arduino IDE
-> Code we to calibirate the RC car in Arduino
+> Code we to calibirate the RC car in Arduino we will see in this section how we used servo motors with RC speed controller.
 5) Android Studio
 > The code of to detect lanes and street signs with TF lite models and OpenCV
 7) OpenCv Library
@@ -19,6 +19,8 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 9) Deep Sort / Kalman filter for tracking purpose.
 
 # ESP32
+![ESP32 LORA](https://user-images.githubusercontent.com/58775369/185207582-fb68e6f0-d809-45ac-9717-c3e5396ce03f.jpeg)
+> ESP32 is a low-cost, low-power Microcontroller with an integrated Wi-Fi and Bluetooth. It is the successor to the ESP8266 which is also a low-cost Wi->Fi microchip albeit with limited vastly limited functionality.
 
 ### OpenCV + Android Studio
 1) Collecting the frames of the Realtime video.
