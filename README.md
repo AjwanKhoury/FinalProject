@@ -199,6 +199,8 @@ In this link you can download any opencv sdk library to integrate it with your a
 
  - Hough transform and Hough lines .
  - Angle steering and calculation of the path.
+<img width="443" alt="Screen Shot 2022-08-17 at 22 20 02" src="https://user-images.githubusercontent.com/58775369/185224911-bdc5fa00-274a-447b-8aaf-15e62148f630.png">
+
 
 ## TesnorFlow Lite model And YOLOv5:
 *In this section  we trained YOLOV5 on customized dataset in order to detect street signs, we used google colab due to availability to the free GPU : PSB and visit YOLOV5 open source on Github*
