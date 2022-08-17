@@ -81,6 +81,86 @@ A detailed step by step instructions to execute some examples available here:
 
 [https://heltec-automation-docs.readthedocs.io/en/latest/esp32/quick_start.html#example](https://heltec-automation-docs.readthedocs.io/en/latest/esp32/quick_start.html#example)
 
+## Arduino IDE
+*First of all you need to install the Arduino IDE to upload your code on ESP32 Board, what we did so far that we calibriated the ESP32 to recieve a Bluetooth Serial to and to parse it in order to navigate the vehicle lets check the code, PSB :*
+## Example
+```ino
+#include <Arduino.h>
+#include "ESC.h"
+#include "BluetoothSerial.h"
+
+
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+#endif
+
+BluetoothSerial SerialBT;
+String angle;
+String strength;
+Servo servo1;
+static const int servoPin = 4;
+#define ESC_PIN (22)
+ESC myESC (ESC_PIN, 1000, 2000,0);
+
+// the bluetooth serial will contain (000,000,0) the first 3 bytes for the angle and the second 3 bytes for the strength and the last byte for buttons
+void setup() {
+  SerialBT.begin();
+  servo1.attach(servoPin);
+  servo1.write(0);
+}
+//
+
+void setup() 
+{
+  pinMode(ESC_PIN, OUTPUT);
+  servo1.attach(servoPin);
+  Serial.begin(115200);
+  SerialBT.begin("ESP32test"); //Bluetooth device name
+  Serial.println("The device started, now you can pair it with bluetooth!");
+  myESC.calib();                  // Calibration of the Max and Min value the ESC is expecting
+  myESC.stop();   
+} 
+
+void reciving ()
+{
+  String value = SerialBT.readStringUntil('#');
+if(value.length()==7)
+    {
+         angle = value.substring(0, 3);
+         strength = value.substring(3, 6);
+        String button = value.substring(6, 8);
+        // Serial.print("angle: ");Serial.print(angle);Serial.print('\t');
+        // Serial.print("strength: ");Serial.print(strength);Serial.print('\t');
+        // Serial.print("button: ");Serial.print(button);Serial.println("");
+        Serial.flush();
+        value="";
+        // int data[] = {angle.toInt(), strength.toInt()};
+    }
+}
+
+void loop()
+{
+
+reciving();
+int val[2] = {angle.toInt() ,strength.toInt()};
+// val[0] =  val[0] - 180 ;
+val[0] = constrain(val[0], 0, 180);
+Serial.println(String(val[0]) + " ," + String( val[1]));
+// int trangle = map(val[0], 0, 359, 0, 180);
+int trstrength = map(val[1], 0, 99, 1000, 1350);
+Serial.println("Angle : "+ String(trangle) + " ," + "Strength: " + String( trstrength));
+myESC.speed(trstrength);
+// servo will update left and right angles
+
+servo1.write(trangle);
+// reset all values
+trangle = 0;
+trstrength = 0;
+delay(100);
+}
+
+
+```
 
 ### OpenCV + Android Studio
 1) Collecting the frames of the Realtime video.
