@@ -97,6 +97,10 @@ Open "Git bash" in path `Username/Documents/Arduino/Library`, and input:
 You will see such a new folder in your library path, install done.
 
 ## Example
+*You need to upload this code to ESP32 board in order to calibirate the RC CAR*
+
+![Arduino Upload code of calibiration](https://user-images.githubusercontent.com/58775369/185226213-551b0ba5-e5b1-4cff-acd2-80c4a01354da.jpeg)
+
 ```ino
 #include <Arduino.h>
 #include "ESC.h"
