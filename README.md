@@ -9,11 +9,14 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 
 ## Tools to be used in this project
 1) ESP32
-2) Arduino IDE
-3) Android Studio
-4) OpenCv Library
-5) YoloV5 / RCNN / Mobile Net v2.
-6) Deep Sort / Kalman filter for tracking purpose.
+> In this section we will cover all informations that we should know about ESP32.
+3) Arduino IDE
+> Code we to calibirate the RC car in Arduino
+5) Android Studio
+> The code of to detect lanes and street signs with TF lite models and OpenCV
+7) OpenCv Library
+8) YoloV5 / RCNN / Mobile Net v2.
+9) Deep Sort / Kalman filter for tracking purpose.
 
 # ESP32
 
