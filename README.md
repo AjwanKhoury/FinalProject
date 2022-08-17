@@ -18,7 +18,9 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 
 ## Architecture of the CAR :
 - KYRC speed controller :
- 	- https://he.aliexpress.com/item/1005002672168342.html
+ 	![KYRC](https://user-images.githubusercontent.com/58775369/185233300-386b0b41-0c1a-4269-9292-c2c4d47d84a0.jpeg)
+- Servo motor 
+	
 ## Tools to be used in this project
 1) ESP32
 > In this section we will cover all informations that we should know about ESP32.
