@@ -18,12 +18,9 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 
 ## Architecture of the CAR :
 --KYRC Speed Controller	
-<p align="center">
-  <img src="[your_relative_path_here](https://user-images.githubusercontent.com/58775369/185233300-386b0b41-0c1a-4269-9292-c2c4d47d84a0.jpeg)" width="350" title="hover text">
-  <img src="your_relative_path_here_number_2_large_name" width="350" alt="accessibility text">
-</p>
+<div>
 <img src="https://user-images.githubusercontent.com/58775369/185233300-386b0b41-0c1a-4269-9292-c2c4d47d84a0.jpeg" width="400" height="400" title="KYRC Speed Controller">
-	
+	</div>
 	
 ## Tools to be used in this project
 1) ESP32
