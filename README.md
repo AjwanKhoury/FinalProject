@@ -82,7 +82,7 @@ A detailed step by step instructions to execute some examples available here:
 [https://heltec-automation-docs.readthedocs.io/en/latest/esp32/quick_start.html#example](https://heltec-automation-docs.readthedocs.io/en/latest/esp32/quick_start.html#example)
 
 ## Arduino IDE
-*First of all you need to install the Arduino IDE to upload your code on ESP32 Board, what we did so far that we calibriated the ESP32 to recieve a Bluetooth Serial to and to parse it in order to navigate the vehicle lets check the code, PSB :*
+*First of all you need to install the Arduino IDE to upload your code on ESP32 Board, what we did so far that we calibriated the ESP32 to recieve a Bluetooth Serial to and to parse it in order to navigate the vehicle lets check the code, this code is used to calibarte the ESP32 to navigate the vehicle PSB :*
 ## Example
 ```ino
 #include <Arduino.h>
