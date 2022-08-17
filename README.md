@@ -24,8 +24,9 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 	
 ### ESP32 Heltec Lora
 <div>
-	<img src="https://user-images.githubusercontent.com/58775369/185235726-0277f25c-9f68-4dce-a88b-855669efe0cd.jpeg" width="400" height="400" >
-	</div>
+<img src="https://user-images.githubusercontent.com/58775369/185235726-0277f25c-9f68-4dce-a88b-855669efe0cd.jpeg" width="400" height="400">
+</div>
+		
 ## Tools to be used in this project
 1) ESP32
 > In this section we will cover all informations that we should know about ESP32.
