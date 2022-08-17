@@ -23,6 +23,5 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 6) Andruav for Navigating.
 7) Two android phones connected to transfer data.
 ## Cameras:
-1) Camera for lane detection.
-2) Camera for object detection.
+One camera for Lane Detection and Object Detection.
 
