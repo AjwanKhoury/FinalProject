@@ -175,14 +175,15 @@ delay(100);
 
 ```
 
-### OpenCV + Android Studio
-1) Collecting the frames of the Realtime video.
-2) Navigating the vehicle.
-3) Compassing information.
-4) Running the AI models for e.g. YoloV5 & Deep Sort.
-5) Running the Computer vision's algorithms (OpenCV library).
-6) Andruav for Navigating.
-7) Two android phones connected to transfer data.
+## Android Studio
+*We decided to use Android studio to implement our application in order to detect the objects and the street signs, it was very hard to combine both of them, due to lack of resources repos on github, and usually the code is implemented in Python not in java.: 
+PSB the result that we achieved using OpenCV and TensorFlow Lite model*
+
+
+https://user-images.githubusercontent.com/58775369/185216993-ed65cc9b-e00c-41b0-8ddb-ae90b379af79.mp4
+
+
+
 ## Cameras:
 One camera for Lane Detection and Object Detection.
 
