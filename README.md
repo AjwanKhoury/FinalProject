@@ -23,9 +23,10 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 	</div>
 	
 
---ESP32 
+--ESP32 ![Heltec_lora](https://user-images.githubusercontent.com/58775369/185235726-0277f25c-9f68-4dce-a88b-855669efe0cd.jpeg)
+
 <div>
-	<img src="[https://user-images.githubusercontent.com/58775369/185233300-386b0b41-0c1a-4269-9292-c2c4d47d84a0.jpeg](https://user-images.githubusercontent.com/58775369/185235492-0cc2a977-1aa4-480e-a1ee-c07e206acb6b.jpeg)" width="400" height="400" title="KYRC Speed Controller">
+	<img src="https://user-images.githubusercontent.com/58775369/185235726-0277f25c-9f68-4dce-a88b-855669efe0cd.jpeg" width="400" height="400" >
 	</div>
 ## Tools to be used in this project
 1) ESP32
