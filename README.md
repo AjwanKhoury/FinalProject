@@ -15,6 +15,10 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 3. [Android Studio](#android-studio)
 
 4. [OpenCV Library](#opencv-library)
+
+## Architecture of the CAR :
+- KYRC speed controller :
+ 	- https://he.aliexpress.com/item/1005002672168342.html
 ## Tools to be used in this project
 1) ESP32
 > In this section we will cover all informations that we should know about ESP32.
