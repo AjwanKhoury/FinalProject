@@ -59,9 +59,6 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 
 2. [How to use this library](#how-to-use-this-library)
 
-3. [API Reference](#api-reference)
-
-4. [Relevant Resources](#relevant-resources)
 
 ***
 
