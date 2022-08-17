@@ -193,10 +193,12 @@ https://user-images.githubusercontent.com/58775369/185223755-ed5b9ed1-14dd-476e-
 
 
 ## OpenCV 
-*We used OpenCV Library 3415 version to in order to process the images and to apply the Hough transform for lines detection*
- - Hough transform and Hough lines 
- - Angle steering 
- - 
+*We used OpenCV Library 3415 version to in order to process the images and to apply the Hough transform for lines detection *
+In this link you can download any opencv sdk library to integrate it with your android studio IDE :
+[Android Studio OpenCV library Download](https://opencv.org/releases/)
+
+ - Hough transform and Hough lines .
+ - Angle steering and calculation of the path.
 
 ## TesnorFlow Lite model And YOLOv5:
 *In this section  we trained YOLOV5 on customized dataset in order to detect street signs, we used google colab due to availability to the free GPU : PSB and visit YOLOV5 open source on Github*
