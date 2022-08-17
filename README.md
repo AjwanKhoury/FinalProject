@@ -32,6 +32,7 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 
 >ESP32 is a low-cost, low-power Microcontroller with an integrated Wi-Fi and Bluetooth. It is the successor to the ESP8266 which is also a low-cost Wi-   >Fi microchip albeit with limited vastly limited functionality.
 
+*`Useful link to start learning on ESP32 with Heltec`*
 
  **[https://heltec-automation-docs.readthedocs.io/en/latest/esp32/quick_start.html](https://heltec-automation-docs.readthedocs.io/en/latest/esp32/quick_start.html)**
 
