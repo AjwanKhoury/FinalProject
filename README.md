@@ -83,6 +83,17 @@ A detailed step by step instructions to execute some examples available here:
 
 ## Arduino IDE
 *First of all you need to install the Arduino IDE to upload your code on ESP32 Board, what we did so far that we calibriated the ESP32 to recieve a Bluetooth Serial to and to parse it in order to navigate the vehicle lets check the code, this code is used to calibarte the ESP32 to navigate the vehicle PSB :*
+*We can see the first trial to when the RC car is not calibirated*
+
+*In Order to use this code please install few libraries to work on Heltec boards, due too differnet architeture *
+
+Open "Git bash" in path `Username/Documents/Arduino/Library`, and input:
+
+    git clone https://github.com/maxpowel/ESC
+    git clone https://github.com/jkb-git/ESP32Servo
+
+You will see such a new folder in your library path, install done.
+
 ## Example
 ```ino
 #include <Arduino.h>
