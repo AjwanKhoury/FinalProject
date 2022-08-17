@@ -23,8 +23,10 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 5) Android Studio
 > The code of to detect lanes and street signs with TF lite models and OpenCV
 7) OpenCv Library
-8) YoloV5 / RCNN / Mobile Net v2.
-9) Deep Sort / Kalman filter for tracking purpose.
+> We will use OpenCV for image proccessing and to detect the lines with Hough transform.
+9) YoloV5 / RCNN / Mobile Net v2.
+> Training YoloV5 on customized dataset to detect street signs and converting the weights to TensorFlow lite in order to use in Android Studio.
+11) Deep Sort / Kalman filter for tracking purpose.
 
 ## ESP32
 
