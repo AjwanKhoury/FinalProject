@@ -17,10 +17,9 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 4. [OpenCV Library](#opencv-library)
 
 ## Architecture of the CAR :
-	<div>
-	<h1> KYRC speed controller </h1>
- 	<img src= "https://user-images.githubusercontent.com/58775369/185233300-386b0b41-0c1a-4269-9292-c2c4d47d84a0.jpeg" width="400" height="400" >
-	</div>
+	
+ 	<img src="https://user-images.githubusercontent.com/58775369/185233300-386b0b41-0c1a-4269-9292-c2c4d47d84a0.jpeg" width="400" height="400" title="KYRC Speed Controller">
+	
 	
 ## Tools to be used in this project
 1) ESP32
