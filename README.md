@@ -49,11 +49,8 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 ### Use Arduino Library Manager
 Open Arduino IDE, then Select `Sketch`->`Include Library`->`Manage Libraries...`
 Search `Heltec ESP32` and install it.
-![image](img/01.png)
 
 &nbsp;
-
-![image](img/02.png)
 
 ### Use Git
 
@@ -64,8 +61,6 @@ Open "Git bash" in path `Username/Documents/Arduino/Library`, and input:
     git clone https://github.com/HelTecAutomation/Heltec_ESP32.git
 
 You will see such a new folder in your library path, install done.
-
-![image](img/location.png)
 
 
 ## How to use this library
