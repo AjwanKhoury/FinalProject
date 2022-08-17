@@ -182,15 +182,19 @@ PSB the result that we achieved using OpenCV and TensorFlow Lite model*
 https://user-images.githubusercontent.com/58775369/185216993-ed65cc9b-e00c-41b0-8ddb-ae90b379af79.mp4
 
 > This result is for lane detection tracking.
+https://user-images.githubusercontent.com/58775369/185222991-6898d95d-6d60-49d1-bb05-5507cebccb5d.mp4
+
 
 
 ## OpenCV 
 *We used OpenCV Library 3415 version to in order to process the images and to apply the Hough transform for lines detection*
-
+ - Hough transform and Hough lines 
+ - Angle steering 
+ - 
 
 ## TesnorFlow Lite model And YOLOv5:
 *In this section  we trained YOLOV5 on customized dataset in order to detect street signs, we used google colab due to availability to the free GPU : PSB and visit YOLOV5 open source on Github*
-[YOLOV5 GITHUB LINK : ] (https://github.com/ultralytics/yolov5)
+[YOLOV5 GITHUB LINK : ](https://github.com/ultralytics/yolov5)
 
 [How to train YOLOV5 on customized dataset](https://github.com/aimanyounises1/FinalProject/blob/master/Roboflow_Train_YOLOv5.ipynb)
 
