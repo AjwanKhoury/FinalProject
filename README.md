@@ -209,6 +209,8 @@ In this link you can download any opencv sdk library to integrate it with your a
 ## TesnorFlow Lite model And YOLOv5:
 *In this section  we trained YOLOV5 on customized dataset in order to detect street signs, we used google colab due to availability to the free GPU : PSB and visit YOLOV5 open source on Github*
 [YOLOV5 GITHUB LINK : ](https://github.com/ultralytics/yolov5)
-
+*This tutorial is based on the YOLOv5 repository by Ultralytics. This notebook shows training on your own custom objects. Many thanks to Ultralytics for putting this repository together - we hope that in combination with clean data management tools at Roboflow, this technologoy will become easily accessible to any developer wishing to use computer vision in their projects.*
 [How to train YOLOV5 on customized dataset](https://github.com/aimanyounises1/FinalProject/blob/master/Roboflow_Train_YOLOv5.ipynb)
 
+*In this section weights to TF lite weights in order to use in Andorid studio*
+[Convert YOLOV5 PyTorch weights to TF lite](https://github.com/aimanyounises1/FinalProject/blob/master/Convert_weight.ipynb)
