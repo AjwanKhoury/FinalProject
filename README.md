@@ -178,9 +178,8 @@ delay(100);
 ## Android Studio
 *We decided to use Android studio to implement our application in order to detect the objects and the street signs, it was very hard to combine both of them, due to lack of resources repos on github, and usually the code is implemented in Python not in java.: 
 PSB the result that we achieved using OpenCV and TensorFlow Lite model*
-- his result is for object detection
- 	 - https://user-images.githubusercontent.com/58775369/185216993-ed65cc9b-e00c-41b0-8ddb-ae90b379af79.mp4
-- [This result is for lane detection tracking](https://user-images.githubusercontent.com/58775369/185222991-6898d95d-6d60-49d1-bb05-5507cebccb5d.mp4)
+result is for object detection https://user-images.githubusercontent.com/58775369/185216993-ed65cc9b-e00c-41b0-8ddb-ae90b379af79.mp4
+
 
 
 
