@@ -22,9 +22,7 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 <img src="https://user-images.githubusercontent.com/58775369/185233300-386b0b41-0c1a-4269-9292-c2c4d47d84a0.jpeg" width="400" height="400" title="KYRC Speed Controller">
 	</div>
 	
-
---ESP32 ![Heltec_lora](https://user-images.githubusercontent.com/58775369/185235726-0277f25c-9f68-4dce-a88b-855669efe0cd.jpeg)
-
+--ESP32 
 <div>
 	<img src="https://user-images.githubusercontent.com/58775369/185235726-0277f25c-9f68-4dce-a88b-855669efe0cd.jpeg" width="400" height="400" >
 	</div>
