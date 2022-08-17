@@ -178,12 +178,19 @@ delay(100);
 ## Android Studio
 *We decided to use Android studio to implement our application in order to detect the objects and the street signs, it was very hard to combine both of them, due to lack of resources repos on github, and usually the code is implemented in Python not in java.: 
 PSB the result that we achieved using OpenCV and TensorFlow Lite model*
-
-
+> This result is for object detection:
 https://user-images.githubusercontent.com/58775369/185216993-ed65cc9b-e00c-41b0-8ddb-ae90b379af79.mp4
 
+> This result is for lane detection tracking.
 
 
-## Cameras:
-One camera for Lane Detection and Object Detection.
+## OpenCV 
+*We used OpenCV Library 3415 version to in order to process the images and to apply the Hough transform for lines detection*
+
+
+## TesnorFlow Lite model And YOLOv5:
+*In this section  we trained YOLOV5 on customized dataset in order to detect street signs, we used google colab due to availability to the free GPU : PSB and visit YOLOV5 open source on Github*
+[YOLOV5 GITHUB LINK : ] (https://github.com/ultralytics/yolov5)
+
+[How to train YOLOV5 on customized dataset](https://github.com/aimanyounises1/FinalProject/blob/master/Roboflow_Train_YOLOv5.ipynb)
 
