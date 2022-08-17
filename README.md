@@ -20,8 +20,61 @@ We are aiming to add emergency vehicle priority awareness feature to autonomous 
 
 # ESP32
 <img src="https://user-images.githubusercontent.com/58775369/185209020-ddea0242-99da-4150-aa80-dbba22ac8b0e.jpeg" width="400" height="400">
+
 >ESP32 is a low-cost, low-power Microcontroller with an integrated Wi-Fi and Bluetooth. It is the successor to the ESP8266 which is also a low-cost Wi-   >Fi microchip albeit with limited vastly limited functionality.
- 
+ **[https://heltec-automation-docs.readthedocs.io/en/latest/esp32/quick_start.html](https://heltec-automation-docs.readthedocs.io/en/latest/esp32/quick_start.html)**
+
+## CONTENT
+
+1. [How to install this library](#how-to-install-this-library)
+
+	- [Use Arduino Library Manager](#use-arduino-library-manager)
+
+	- [Use Git](#use-git)
+
+2. [How to use this library](#how-to-use-this-library)
+
+3. [API Reference](#api-reference)
+
+4. [Relevant Resources](#relevant-resources)
+
+***
+
+
+## How to install this library
+*`We recommend using the Arduino library manager, it's the simplest way`*
+
+### Use Arduino Library Manager
+Open Arduino IDE, then Select `Sketch`->`Include Library`->`Manage Libraries...`
+Search `Heltec ESP32` and install it.
+![image](img/01.png)
+
+&nbsp;
+
+![image](img/02.png)
+
+### Use Git
+
+*Firstly, make sure git and the Arduino IDE have been installed first. If not, please refer [How to install Git and Arduino](https://heltec-automation-docs.readthedocs.io/en/latest/general/how_to_install_git_and_arduino.html). When Arduino is installed correctly, you will find a folder in "Username/Documents/Arduino/Library". **this library must in this path!***
+
+Open "Git bash" in path `Username/Documents/Arduino/Library`, and input:
+
+    git clone https://github.com/HelTecAutomation/Heltec_ESP32.git
+
+You will see such a new folder in your library path, install done.
+
+![image](img/location.png)
+
+
+## How to use this library
+
+**This library requires the [Heltec ESP32 develop framework](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series)!**
+
+A detailed step by step instructions to execute some examples available here:
+
+[https://heltec-automation-docs.readthedocs.io/en/latest/esp32/quick_start.html#example](https://heltec-automation-docs.readthedocs.io/en/latest/esp32/quick_start.html#example)
+
+
 ### OpenCV + Android Studio
 1) Collecting the frames of the Realtime video.
 2) Navigating the vehicle.
